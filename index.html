@@ -113,7 +113,6 @@
     const stars = document.querySelectorAll('.star');
     const messageDiv = document.getElementById('message');
 
-    // Star selection
     stars.forEach(star => {
       star.addEventListener('click', () => {
         selectedRating = parseInt(star.dataset.val);
@@ -123,7 +122,6 @@
       });
     });
 
-    // Submit feedback
     async function submitFeedback() {
       const comment = document.getElementById('comment').value.trim();
       messageDiv.textContent = '';
@@ -141,7 +139,6 @@
 
       const endpoint = "https://script.google.com/macros/s/AKfycbyj_ecfbaQlivAcLnBc5f6a-DmbY-J_2FZMJqUcvcrTuA5-uedCBoIeu88AwFZFwsFbfA/exec";
 
-
       try {
         const res = await fetch(endpoint, {
           method: 'POST',
@@ -151,13 +148,13 @@
 
         const result = await res.json();
         if (result.status === "success") {
-          messageDiv.textContent = 'Thank you! Your feedback has been submitted.';
+          messageDiv.textContent = '✅ Feedback submitted successfully!';
           messageDiv.style.color = 'green';
           document.getElementById('comment').value = '';
           stars.forEach(s => s.classList.remove('selected'));
           selectedRating = 0;
         } else {
-          throw new Error('Submission failed');
+          throw new Error("Failed on server side");
         }
       } catch (err) {
         messageDiv.textContent = 'Something went wrong. Try again later.';
