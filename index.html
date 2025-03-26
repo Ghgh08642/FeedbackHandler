@@ -133,12 +133,12 @@
       }
 
       const feedback = {
-        rating: selectedRating,
-        comment: comment
+        Timestamp: new Date().toLocaleString(),
+        Rating: selectedRating,
+        Comment: comment
       };
 
-      // ✅ Your actual endpoint using CORS proxy
-      const endpoint = "https://corsproxy.io/?https://script.google.com/macros/s/AKfycbyj_ecfbaQlivAcLnBc5f6a-DmbY-J_2FZMJqUcvcrTuA5-uedCBoIeu88AwFZFwsFbfA/exec";
+      const endpoint = "https://api.sheetbest.com/sheets/8b78a0c8-9b8f-4055-9f0d-843f06e7ddd2";
 
       try {
         const res = await fetch(endpoint, {
@@ -147,15 +147,14 @@
           headers: { "Content-Type": "application/json" }
         });
 
-        const result = await res.json();
-        if (result.status === "success") {
+        if (res.ok) {
           messageDiv.textContent = '✅ Feedback submitted successfully!';
           messageDiv.style.color = 'green';
           document.getElementById('comment').value = '';
           stars.forEach(s => s.classList.remove('selected'));
           selectedRating = 0;
         } else {
-          throw new Error("Failed on server side");
+          throw new Error("Submission failed");
         }
       } catch (err) {
         messageDiv.textContent = 'Something went wrong. Try again later.';
