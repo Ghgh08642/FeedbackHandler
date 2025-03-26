@@ -137,7 +137,8 @@
         comment: comment
       };
 
-      const endpoint = "https://script.google.com/macros/s/AKfycbyj_ecfbaQlivAcLnBc5f6a-DmbY-J_2FZMJqUcvcrTuA5-uedCBoIeu88AwFZFwsFbfA/exec";
+      // ✅ Your actual endpoint using CORS proxy
+      const endpoint = "https://corsproxy.io/?https://script.google.com/macros/s/AKfycbyj_ecfbaQlivAcLnBc5f6a-DmbY-J_2FZMJqUcvcrTuA5-uedCBoIeu88AwFZFwsFbfA/exec";
 
       try {
         const res = await fetch(endpoint, {
