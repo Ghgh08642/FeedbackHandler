@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customer Feedback</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 2rem 1rem;
+      background-color: #f4f4f4;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .feedback-form {
+      background-color: #fff;
+      max-width: 500px;
+      margin: auto;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stars {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .star {
+      font-size: 2rem;
+      cursor: pointer;
+      color: #ccc;
+      transition: color 0.3s;
+    }
+
+    .star:hover,
+    .star.selected {
+      color: gold;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      resize: none;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    textarea:focus {
+      border-color: teal;
+      outline: none;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      background-color: teal;
+      color: white;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #006666;
+    }
+
+    .message {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    @media (max-width: 500px) {
+      .feedback-form {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>We Value Your Feedback</h2>
+
+  <div class="feedback-form">
+    <div class="stars" id="star-container">
+      <span class="star" data-val="1">&#9733;</span>
+      <span class="star" data-val="2">&#9733;</span>
+      <span class="star" data-val="3">&#9733;</span>
+      <span class="star" data-val="4">&#9733;</span>
+      <span class="star" data-val="5">&#9733;</span>
+    </div>
+
+    <textarea id="comment" placeholder="Leave a comment..."></textarea>
+    <button onclick="submitFeedback()">Submit</button>
+    <div id="message" class="message"></div>
+  </div>
+
+  <script>
+    let selectedRating = 0;
+    const stars = document.querySelectorAll('.star');
+    const messageDiv = document.getElementById('message');
+
+    // Star selection
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        selectedRating = parseInt(star.dataset.val);
+        stars.forEach(s => {
+          s.classList.toggle('selected', parseInt(s.dataset.val) <= selectedRating);
+        });
+      });
+    });
+
+    // Submit feedback
+    async function submitFeedback() {
+      const comment = document.getElementById('comment').value.trim();
+      messageDiv.textContent = '';
+
+      if (selectedRating === 0 || comment === '') {
+        messageDiv.textContent = 'Please provide both rating and comment.';
+        messageDiv.style.color = 'red';
+        return;
+      }
+
+      const feedback = {
+        rating: selectedRating,
+        comment: comment
+      };
+
+      const endpoint = "https://script.google.com/macros/s/AKfycbyiYbUsatEtX8BMA-ifG5EfXoLfNV-E7TCDevvu2VTg5B4uhwONQIa1x_lPndh7XLg0_Q/exec"; // Replace with your Google Apps Script URL
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          body: JSON.stringify(feedback),
+          headers: { "Content-Type": "application/json" }
+        });
+
+        const result = await res.json();
+        if (result.status === "success") {
+          messageDiv.textContent = 'Thank you! Your feedback has been submitted.';
+          messageDiv.style.color = 'green';
+          document.getElementById('comment').value = '';
+          stars.forEach(s => s.classList.remove('selected'));
+          selectedRating = 0;
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (err) {
+        messageDiv.textContent = 'Something went wrong. Try again later.';
+        messageDiv.style.color = 'red';
+        console.error(err);
+      }
+    }
+  </script>
+
+</body>
+</html>
